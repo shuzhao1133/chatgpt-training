@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatGPT & Codex 项目组 AI 培训手册</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f0f0;--white:#fff;--dark:#0f0f0f;--mid:#3d3d3d;--light:#888;
+  --green:#1a6b3a;--green-l:#2d8a50;--green-pale:#eef7f2;--green-b:#b7deca;
+  --orange:#c0541e;--teal:#1a5b6b;--border:#d8d5d0;--code-bg:#1a2e24;
+}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;background:var(--bg);color:var(--dark);line-height:1.65;}
+
+/* NAV */
+.top-nav{background:var(--dark);color:#fff;padding:12px 28px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;}
+.nav-logo{background:var(--green);color:#fff;font-size:10px;font-weight:800;letter-spacing:1.2px;padding:4px 10px;border-radius:4px;text-transform:uppercase;}
+.nav-title{font-size:13.5px;font-weight:600;color:#f0f0f0;}
+.nav-meta{font-size:12px;color:#888;margin-left:auto;}
+
+/* LAYOUT */
+.layout{display:flex;min-height:calc(100vh - 50px);}
+
+/* SIDEBAR */
+.sidebar{width:232px;flex-shrink:0;background:var(--dark);padding:16px 0;position:sticky;top:50px;height:calc(100vh - 50px);overflow-y:auto;}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:#333}
+.sb-group{padding:14px 16px 3px;font-size:9px;font-weight:800;letter-spacing:2px;color:#555;text-transform:uppercase;}
+.sb-link{display:block;padding:7px 16px 7px 20px;font-size:12.5px;color:#999;text-decoration:none;border-left:3px solid transparent;transition:all .12s;line-height:1.35;}
+.sb-link:hover{background:#1a1a1a;color:#e0e0e0;}
+.sb-link.active{border-left-color:var(--green-l);color:var(--green-l);background:#1a1a1a;font-weight:600;}
+
+/* MAIN */
+.main{flex:1;padding:44px 52px;max-width:900px;}
+.sec{margin-bottom:72px;scroll-margin-top:76px;}
+
+/* PILL */
+.bc{display:inline-flex;align-items:center;gap:6px;background:var(--green-pale);border:1px solid var(--green-b);border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600;color:var(--green);margin-bottom:10px;}
+
+.sec-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:10px;line-height:1.25;}
+.sec-lead{font-size:14.5px;color:var(--mid);margin-bottom:22px;line-height:1.75;padding-left:14px;border-left:3px solid var(--green);}
+
+/* CARDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0;}
+.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 15px;}
+.card.tg{border-top:3px solid var(--green);}
+.card.to{border-top:3px solid var(--orange);}
+.card.tt{border-top:3px solid var(--teal);}
+.card-num{font-size:26px;font-weight:900;color:var(--green);margin-bottom:5px;}
+.card-title{font-size:13.5px;font-weight:700;color:var(--dark);margin-bottom:5px;}
+.card-desc{font-size:12.5px;color:var(--mid);line-height:1.55;}
+
+/* MODEL CARDS */
+.model-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:16px 0;}
+.model-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 16px;position:relative;}
+.model-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px;}
+.badge-default{background:#d4f0e2;color:var(--green);}
+.badge-power{background:#e8f7ee;color:var(--green);}
+.badge-fast{background:#fff3e0;color:var(--orange);}
+.badge-unavail{background:#f5f5f5;color:#999;text-decoration:line-through;}
+.model-name{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:3px;}
+.model-family{font-size:11px;color:var(--light);margin-bottom:10px;}
+.model-price{font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;}
+.model-specs{font-size:11.5px;color:var(--mid);line-height:1.7;margin-bottom:10px;}
+.model-best{font-size:11.5px;color:var(--dark);background:var(--green-pale);border-radius:5px;padding:7px 10px;line-height:1.5;}
+.model-best strong{color:var(--green);}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:11px;margin:14px 0;}
+.step{display:flex;align-items:flex-start;gap:12px;}
+.step-n{width:26px;height:26px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.step-body{flex:1;}
+.step-title{font-size:13.5px;font-weight:700;color:var(--dark);margin-bottom:2px;}
+.step-desc{font-size:12.5px;color:var(--mid);line-height:1.55;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:12.5px;}
+.tbl th{background:#eef7f2;padding:9px 13px;text-align:left;font-weight:700;font-size:11.5px;color:var(--mid);border-bottom:2px solid var(--green-b);}
+.tbl td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--mid);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--green-pale);}
+.td-b{font-weight:600;color:var(--dark);}
+
+/* CALLOUT */
+.callout{background:var(--green-pale);border:1px solid var(--green-b);border-left:4px solid var(--green);border-radius:6px;padding:13px 17px;margin:14px 0;font-size:13.5px;color:var(--dark);line-height:1.65;}
+.callout strong{color:var(--green);}
+.callout-warn{background:#fff9f0;border:1px solid #e8c88a;border-left-color:var(--orange);}
+.callout-warn strong{color:var(--orange);}
+.callout-red{background:#fdf2f2;border:1px solid #e8b4b4;border-left-color:#c0392b;}
+.callout-red strong{color:#c0392b;}
+.callout-teal{background:#eef7f6;border:1px solid #b7d9df;border-left-color:var(--teal);}
+.callout-teal strong{color:var(--teal);}
+
+/* FLOW */
+.flow{display:flex;gap:0;margin:16px 0;align-items:stretch;}
+.flow-step{flex:1;background:#fff;border:1px solid var(--border);padding:14px 12px;position:relative;}
+.flow-step:not(:last-child)::after{content:'→';position:absolute;right:-12px;top:50%;transform:translateY(-50%);z-index:2;color:var(--green);font-size:15px;font-weight:700;}
+.flow-step:first-child{border-radius:8px 0 0 8px;}
+.flow-step:last-child{border-radius:0 8px 8px 0;}
+.flow-n{font-size:10px;font-weight:700;color:var(--green);margin-bottom:3px;}
+.flow-title{font-size:12.5px;font-weight:700;color:var(--dark);margin-bottom:3px;}
+.flow-desc{font-size:11.5px;color:var(--mid);line-height:1.4;}
+
+/* PART BANNER */
+.part-banner{background:linear-gradient(135deg,#0a2e1a 0%,#1a6b3a 100%);color:#fff;border-radius:10px;padding:30px 34px;margin-bottom:30px;position:relative;overflow:hidden;}
+.part-banner::after{content:attr(data-part);position:absolute;right:34px;top:50%;transform:translateY(-50%);font-size:76px;font-weight:900;opacity:.08;color:#fff;line-height:1;}
+.pb-label{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:7px;}
+.pb-title{font-size:22px;font-weight:800;margin-bottom:9px;}
+.pb-desc{font-size:13.5px;color:#ccc;line-height:1.65;}
+.pb-tags{display:flex;gap:7px;margin-top:13px;flex-wrap:wrap;}
+.pb-tag{background:rgba(45,138,80,.4);border:1px solid rgba(45,138,80,.5);color:#b8f5d0;font-size:10.5px;padding:3px 9px;border-radius:3px;}
+
+/* SOP ACCORDION */
+.sop{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:14px 0;}
+.sop-head{background:#eef7f2;padding:11px 16px;font-weight:700;font-size:13px;color:var(--dark);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .15s;user-select:none;}
+.sop-head:hover{background:#d8f0e5;}
+.sop-head .sop-arrow{color:var(--green);font-size:11px;transition:transform .2s;}
+.sop-head.open .sop-arrow{transform:rotate(90deg);}
+.sop-body{display:none;padding:16px;border-top:1px solid var(--green-b);}
+.sop-body.open{display:block;animation:fadeIn .18s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* CODE */
+.code{background:var(--code-bg);color:#b7f0d0;border-radius:6px;padding:14px 18px;font-family:'SF Mono','Fira Code',monospace;font-size:12.5px;line-height:1.6;overflow-x:auto;margin:10px 0;}
+code{background:#e8f5ef;padding:1px 5px;border-radius:3px;font-size:12px;font-family:'SF Mono','Fira Code',monospace;color:var(--green);}
+
+/* COMPLIANCE */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;}
+.comp-card{border-radius:7px;padding:14px 15px;}
+.comp-red{background:#fdf2f2;border:1px solid #e8b4b4;}
+.comp-green{background:var(--green-pale);border:1px solid var(--green-b);}
+.comp-yellow{background:#fff9f0;border:1px solid #e8c88a;}
+.comp-title{font-size:13px;font-weight:700;margin-bottom:8px;}
+.comp-red .comp-title{color:#c0392b;}
+.comp-green .comp-title{color:var(--green);}
+.comp-yellow .comp-title{color:var(--orange);}
+.comp-list{font-size:12.5px;color:var(--mid);line-height:1.8;padding-left:4px;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0a2e1a 0%,#1a6b3a 60%,#0a3320 100%);border-radius:12px;padding:48px 48px 44px;margin-bottom:36px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(45,138,80,.3);}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;color:#7fd49b;margin-bottom:14px;}
+.hero-title{font-size:36px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px;}
+.hero-title em{color:#a0f0c0;font-style:normal;}
+.hero-lead{font-size:15px;color:#ccc;line-height:1.7;max-width:520px;margin-bottom:28px;}
+.hero-stats{display:flex;gap:32px;}
+.hero-stat-num{font-size:32px;font-weight:900;color:#a0f0c0;display:block;}
+.hero-stat-label{font-size:12px;color:#999;display:block;}
+
+/* WHERE TO FIND */
+.where-box{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin:10px 0;display:flex;align-items:flex-start;gap:12px;}
+.where-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.where-body{flex:1;}
+.where-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:3px;}
+.where-desc{font-size:12px;color:var(--mid);line-height:1.5;}
+.where-path{font-size:11px;color:var(--green);font-family:'SF Mono',monospace;background:var(--green-pale);padding:2px 7px;border-radius:3px;display:inline-block;margin-top:4px;}
+
+hr.div{border:none;border-top:1px solid var(--border);margin:28px 0;}
+
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .main{padding:22px 18px;}
+  .grid-3,.grid-2,.comp-grid,.model-grid{grid-template-columns:1fr;}
+  .flow{flex-direction:column;}
+  .flow-step{border-radius:6px!important;}
+  .flow-step:not(:last-child)::after{display:none;}
+  .hero{padding:32px 24px;}
+  .hero-title{font-size:26px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="nav-logo">AI Training</span>
+  <span class="nav-title">ChatGPT &amp; Codex 项目组 AI 培训手册</span>
+  <span class="nav-meta">项目组版 · 正式演示版 · 2026</span>
+</nav>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sb-group">概览</div>
+  <a class="sb-link active" href="#cover" onclick="setA(this)">封面与培训目标</a>
+  <a class="sb-link" href="#overview" onclick="setA(this)">三段式结构</a>
+
+  <div class="sb-group">PART 01 · 配置</div>
+  <a class="sb-link" href="#config-paths" onclick="setA(this)">接入路径总览</a>
+  <a class="sb-link" href="#config-chatgpt" onclick="setA(this)">ChatGPT 账号 SOP</a>
+  <a class="sb-link" href="#config-api" onclick="setA(this)">API Key SOP</a>
+  <a class="sb-link" href="#config-codex" onclick="setA(this)">Codex CLI / VS Code SOP</a>
+  <a class="sb-link" href="#config-domestic" onclick="setA(this)">国内兼容 API SOP</a>
+
+  <div class="sb-group">PART 02 · ChatGPT 功能</div>
+  <a class="sb-link" href="#chatgpt-projects" onclick="setA(this)">Projects 知识库</a>
+  <a class="sb-link" href="#chatgpt-research" onclick="setA(this)">Deep Research 深度研究</a>
+  <a class="sb-link" href="#chatgpt-data" onclick="setA(this)">文件与数据分析</a>
+  <a class="sb-link" href="#chatgpt-tasks" onclick="setA(this)">Tasks 定时任务</a>
+  <a class="sb-link" href="#chatgpt-writing" onclick="setA(this)">写作与 Canvas</a>
+
+  <div class="sb-group">PART 02 · Codex 功能</div>
+  <a class="sb-link" href="#codex-exec" onclick="setA(this)">CLI 与 IDE 执行</a>
+  <a class="sb-link" href="#codex-agents" onclick="setA(this)">AGENTS.md 与 Skills</a>
+  <a class="sb-link" href="#scenario-map" onclick="setA(this)">功能场景总表</a>
+  <a class="sb-link" href="#prompting" onclick="setA(this)">提示词框架</a>
+
+  <div class="sb-group">PART 03 · 案例</div>
+  <a class="sb-link" href="#case-flow" onclick="setA(this)">Python 热力图流程</a>
+  <a class="sb-link" href="#case-prompt" onclick="setA(this)">示例提示词</a>
+
+  <div class="sb-group">合规与边界</div>
+  <a class="sb-link" href="#compliance" onclick="setA(this)">合规使用规范</a>
+
+  <div class="sb-group">总结</div>
+  <a class="sb-link" href="#wrapup" onclick="setA(this)">带走的判断</a>
+</nav>
+
+<main class="main">
+
+<!-- COVER -->
+<section id="cover" class="sec">
+  <div class="hero">
+    <div class="hero-eyebrow">OPENAI · AI TOOLKIT TRAINING · 2026</div>
+    <div class="hero-title">ChatGPT &amp; Codex<br><em>项目组 AI 培训手册</em></div>
+    <div class="hero-lead">目标是帮助项目组建立一套<strong style="color:#fff">可落地的工作流</strong>：用 ChatGPT 做资料理解、深度研究和报告撰写；用 Codex 做数据清洗、脚本生成和自动化任务沉淀。</div>
+    <div class="hero-stats">
+      <div><span class="hero-stat-num">4</span><span class="hero-stat-label">条接入路径</span></div>
+      <div><span class="hero-stat-num">8+</span><span class="hero-stat-label">个核心功能场景</span></div>
+      <div><span class="hero-stat-num">4</span><span class="hero-stat-label">条合规边界线</span></div>
+    </div>
+  </div>
+  <div class="grid-3">
+    <div class="card tg"><div class="card-title">培训对象</div><div class="card-desc">项目经理 / 顾问 / 数据分析同事</div></div>
+    <div class="card to"><div class="card-title">培训目标</div><div class="card-desc">从配置到交付，建立可落地 AI 工作流</div></div>
+    <div class="card tt"><div class="card-title">带走的输出</div><div class="card-desc">AGENTS.md 模板、提示词框架、Python 热力图脚本、可复用 Skills</div></div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview" class="sec">
+  <span class="bc">概览</span>
+  <h2 class="sec-title">三段式培训结构</h2>
+  <p class="sec-lead">三个模块各司其职，形成完整闭环：配置解决「能不能用」，功能解决「用在哪里」，案例解决「如何交付」——外加合规边界，确保项目实践中的风险可控。</p>
+  <div class="grid-3">
+    <div class="card tg"><div class="card-num">01</div><div class="card-title">配置</div><div class="card-desc">四条接入路径 SOP，涵盖账号、API Key、Codex CLI/VS Code、国内兼容 API——解决「能不能用」。</div></div>
+    <div class="card to"><div class="card-num">02</div><div class="card-title">功能</div><div class="card-desc">ChatGPT 5 大场景 + Codex 2 大模块，8 个核心功能的真实工作用法与适用边界。</div></div>
+    <div class="card tt"><div class="card-num">03</div><div class="card-title">案例 + 合规</div><div class="card-desc">从 Python 环境到热力图交付的完整案例演示，加合规边界规范，确保安全可复用。</div></div>
+  </div>
+  <div class="callout"><strong>主线逻辑：</strong>能用（配置）→ 会用（功能）→ 用好（案例）→ 安全用（合规）。</div>
+</section>
+
+<!-- PART 01 -->
+<div class="part-banner" data-part="01">
+  <div class="pb-label">PART 01</div>
+  <div class="pb-title">配置路径</div>
+  <div class="pb-desc">先建立稳定接入，再根据成本、访问限制、合规要求选择合适方案。四条路径满足不同技术背景与使用场景，不必从最复杂的开始。</div>
+  <div class="pb-tags">
+    <span class="pb-tag">ChatGPT 账号</span>
+    <span class="pb-tag">OpenAI API Key</span>
+    <span class="pb-tag">Codex CLI / VS Code</span>
+    <span class="pb-tag">国内兼容 API</span>
+  </div>
+</div>
+
+<section id="config-paths" class="sec">
+  <span class="bc">PART 01 · 配置</span>
+  <h2 class="sec-title">四条接入路径：按需选择，可以并行</h2>
+  <p class="sec-lead">不同路径适合不同角色与需求，实际使用中可同时开启多条。建议所有成员先配置 ChatGPT 账号路径，数据分析同事额外配置 API Key 或 Codex CLI。</p>
+  <table class="tbl">
+    <thead><tr><th>路径</th><th>适合人群</th><th>典型场景</th><th>技术门槛</th></tr></thead>
+    <tbody>
+      <tr><td class="td-b">ChatGPT 账号</td><td>所有成员</td><td>文档处理、资料阅读、报告撰写、PPT 大纲</td><td>⭐ 无需配置</td></tr>
+      <tr><td class="td-b">OpenAI API Key</td><td>数据分析、有自动化需求</td><td>批量处理 Excel、生成脚本、调用模型 API</td><td>⭐⭐ 需申请 Key</td></tr>
+      <tr><td class="td-b">Codex CLI / VS Code</td><td>需要跑 Python、数据脚本</td><td>数据清洗、图表生成、批量文件转换</td><td>⭐⭐⭐ 需安装环境</td></tr>
+      <tr><td class="td-b">国内兼容 API</td><td>访问受限或成本敏感</td><td>千问、DeepSeek、Kimi 等国产模型替代</td><td>⭐⭐ 替换三个参数</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><strong>建议顺序：</strong>先完成 ChatGPT 账号配置 → 数据分析同事再加 API Key → 需要本地跑脚本再装 Codex CLI → 如遇访问问题再切国内 API。</div>
+</section>
+
+<section id="config-chatgpt" class="sec">
+  <span class="bc">PART 01 · 配置 — ChatGPT 账号</span>
+  <h2 class="sec-title">路径一：ChatGPT 账号 SOP</h2>
+  <p class="sec-lead">适合所有项目成员。用于日常文档处理、资料阅读、会议纪要、访谈整理、报告润色、PPT 大纲生成。ChatGPT Plus（$20/月）解锁 Projects、Deep Research、Data Analysis 全部能力。</p>
+  <div class="steps">
+    <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-title">注册并升级 Plus</div><div class="step-desc">访问 chat.openai.com，注册账号后升级 Plus 计划。升级后可使用 GPT-4o、Projects、Deep Research、Data Analysis、Tasks 全部功能。</div></div></div>
+    <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-title">按项目建立 Project</div><div class="step-desc">左侧边栏 → 「+ New project」，按项目名称创建。每个 Project 独立管理文件和对话，上下文隔离不串扰。</div></div></div>
+    <div class="step"><div class="step-n">3</div><div class="step-body"><div class="step-title">上传核心项目文件</div><div class="step-desc">在 Project 内上传：合同、方案、问卷、访谈记录、报告模板。命名建议：<code>2024-访谈记录-成都-商户A.pdf</code></div></div></div>
+    <div class="step"><div class="step-n">4</div><div class="step-body"><div class="step-title">写入 Custom Instructions</div><div class="step-desc">Project Settings → Custom Instructions：设置报告风格、客户口径、禁止事项。ChatGPT 每次对话都会遵守这些规则。</div></div></div>
+    <div class="step"><div class="step-n">5</div><div class="step-body"><div class="step-title">建立固定对话入口</div><div class="step-desc">在 Project 内为常用任务建立专属对话并命名，避免混用：「📄 资料整理」「📝 报告撰写」「📊 数据分析」「🖥 PPT 大纲」。</div></div></div>
+  </div>
+  <div class="sop">
+    <div class="sop-head" onclick="toggleSop(this)"><span>📋 Custom Instructions 模板（点击展开）</span><span class="sop-arrow">▶</span></div>
+    <div class="sop-body">
+      <div class="code" style="font-size:12px">
+你是本项目的研究助手。项目背景：[四川省餐饮个体工商户动态监测研究]，委托方为[某省商务厅]。<br><br>
+输出风格：政府咨询报告风格，客观陈述，避免绝对化表述。<br>
+数据规范：政策数据必须标注来源和时间，不得编造统计数字。<br>
+格式：段落使用二级标题，要点用短句。<br><br>
+禁止事项：<br>
+- 不得将客户名称、项目编号写入任何输出<br>
+- 不得引用我未提供的"内部数据"或"调研结论"<br>
+- 所有政策摘引须注明"来源：[文件名]"
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-warn"><strong>⚠ 文件安全：</strong>Project 内上传的文件会被 ChatGPT 读取。禁止上传含客户姓名、手机、身份证、合同金额的原始文件。上传前脱敏处理。</div>
+</section>
+
+<section id="config-api" class="sec">
+  <span class="bc">PART 01 · 配置 — API Key</span>
+  <h2 class="sec-title">路径二：OpenAI API Key SOP</h2>
+  <p class="sec-lead">访问 <strong>platform.openai.com</strong> 申请 Key。API 路径解锁无限制按 token 计费的灵活用量，配合批量处理和国产模型替代可有效控制成本。</p>
+  <div class="steps">
+    <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-title">申请 API Key</div><div class="step-desc">platform.openai.com → API Keys → Create Key。命名建议加前缀：<code>proj-sichuan-analysis</code>。Key 只显示一次，立即复制保存。</div></div></div>
+    <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-title">安全存储——必须用环境变量</div><div class="step-desc">
+      <strong>绝对禁止</strong>将 Key 写入代码或上传任何平台。正确做法：<br>
+      macOS/Linux：<code>echo 'export OPENAI_API_KEY="sk-..."' >> ~/.zshrc && source ~/.zshrc</code><br>
+      Windows：系统设置 → 环境变量 → 新建 OPENAI_API_KEY<br>
+      代码中读取：<code>import os; key = os.environ["OPENAI_API_KEY"]</code>
+    </div></div></div>
+    <div class="step"><div class="step-n">3</div><div class="step-body"><div class="step-title">设置预算上限</div><div class="step-desc">platform.openai.com → Billing → Usage limits：月度硬上限（如 $30）+ 软提醒（$20 时邮件通知）。</div></div></div>
+    <div class="step"><div class="step-n">4</div><div class="step-body"><div class="step-title">选择合适模型</div><div class="step-desc"><code>gpt-4o</code> 综合能力最强，适合复杂分析；<code>gpt-4o-mini</code> 成本低约 20 倍，适合批量简单任务。先用 mini 跑通流程，再用 4o 提质量。</div></div></div>
+  </div>
+  <div class="callout callout-warn"><strong>⚠ 安全：</strong>API Key 等同账号密码。泄露后立即在 platform.openai.com 撤销（Revoke）并重新生成。</div>
+</section>
+
+<section id="config-codex" class="sec">
+  <span class="bc">PART 01 · 配置 — Codex CLI / VS Code</span>
+  <h2 class="sec-title">路径三：Codex CLI / VS Code SOP</h2>
+  <p class="sec-lead">Codex CLI 在本地终端运行，读取当前目录文件，用自然语言驱动代码生成和执行。适合数据分析、脚本自动化、大文件操作。</p>
+  <div class="sop">
+    <div class="sop-head" onclick="toggleSop(this)"><span>📦 Codex CLI 安装步骤（点击展开）</span><span class="sop-arrow">▶</span></div>
+    <div class="sop-body">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-title">安装 Node.js（≥18）</div><div class="step-desc">nodejs.org 下载 LTS。验证：<code>node --version</code></div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-title">安装 Codex CLI</div><div class="step-desc"><code>npm install -g @openai/codex</code><br>验证：<code>codex --version</code></div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body"><div class="step-title">配置 API Key</div><div class="step-desc">确保已设置环境变量 <code>OPENAI_API_KEY</code>（见路径二）。</div></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body"><div class="step-title">进入项目目录启动</div><div class="step-desc"><code>cd /path/to/project</code> → <code>codex</code><br>读取当前目录后即可用自然语言提需求。</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sop">
+    <div class="sop-head" onclick="toggleSop(this)"><span>🖥 VS Code 扩展配置（点击展开）</span><span class="sop-arrow">▶</span></div>
+    <div class="sop-body">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-title">安装 VS Code</div><div class="step-desc">code.visualstudio.com 下载安装。</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-title">安装 Python 扩展 + 项目依赖</div><div class="step-desc">扩展市场安装「Python」（Microsoft 官方），终端运行：<code>pip install pandas matplotlib openpyxl seaborn python-docx</code></div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body"><div class="step-title">安装 GitHub Copilot 或 Continue</div><div class="step-desc">Copilot（$10/月）提供行内补全；Continue（免费）支持配置自定义 API Key 和国内模型，适合内部使用。</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-title" style="margin:18px 0 10px">⌨ Codex 典型工作流</div>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-n">描述</div><div class="flow-title">自然语言说需求</div><div class="flow-desc">「清洗这个 Excel，去掉空行，按地区分组统计均值」</div></div>
+    <div class="flow-step"><div class="flow-n">生成</div><div class="flow-title">Codex 生成代码</div><div class="flow-desc">自动读取目录文件，生成 .py 脚本并显示</div></div>
+    <div class="flow-step"><div class="flow-n">运行</div><div class="flow-title">本地执行</div><div class="flow-desc">查看输出结果或报错信息</div></div>
+    <div class="flow-step"><div class="flow-n">修复</div><div class="flow-title">报错→自动修</div><div class="flow-desc">复制报错信息告知 Codex，自动修复</div></div>
+    <div class="flow-step"><div class="flow-n">交付</div><div class="flow-title">输出文件</div><div class="flow-desc">Excel / PNG / Word / PPT</div></div>
+  </div>
+</section>
+
+<section id="config-domestic" class="sec">
+  <span class="bc">PART 01 · 配置 — 国内兼容 API</span>
+  <h2 class="sec-title">路径四：国内兼容 API SOP</h2>
+  <p class="sec-lead">适合访问受限、成本敏感或需要国产模型备选的场景。核心逻辑：国内主流大模型均提供 OpenAI-compatible 接口——只需替换三个参数，无需改动其余代码。</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔧 三个核心参数</div>
+      <div class="code" style="margin-top:10px;font-size:12px">
+import openai<br>
+client = openai.OpenAI(<br>
+&nbsp;&nbsp;base_url="https://api.xxx.com/v1",<br>
+&nbsp;&nbsp;api_key="sk-xxxxx",<br>
+)<br>
+response = client.chat.completions.create(<br>
+&nbsp;&nbsp;model="qwen-plus",<br>
+&nbsp;&nbsp;messages=[...]<br>
+)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 主流服务商参数对照</div>
+      <table class="tbl" style="margin-top:10px;font-size:12px">
+        <thead><tr><th>服务商</th><th>base_url</th><th>model 示例</th></tr></thead>
+        <tbody>
+          <tr><td>阿里千问</td><td>dashscope.aliyuncs.com/compatible-mode/v1</td><td>qwen-plus</td></tr>
+          <tr><td>DeepSeek</td><td>api.deepseek.com/v1</td><td>deepseek-chat</td></tr>
+          <tr><td>Kimi</td><td>api.moonshot.cn/v1</td><td>moonshot-v1-8k</td></tr>
+          <tr><td>字节豆包</td><td>ark.cn-beijing.volces.com/api/v3</td><td>ep-xxxxxx</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="steps" style="margin-top:16px">
+    <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-title">验证输出质量</div><div class="step-desc">用同一套提示词对比 OpenAI 和国内模型的输出，重点检查逻辑完整性、数据准确性、格式一致性。</div></div></div>
+    <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-title">核算 Token 成本</div><div class="step-desc">各服务商 Token 定价差异较大。测试时记录每次 prompt_tokens 和 completion_tokens，换算实际成本后再决定大规模使用。</div></div></div>
+    <div class="step"><div class="step-n">3</div><div class="step-body"><div class="step-title">确认数据安全要求</div><div class="step-desc">项目涉及客户资料时，必须先确认：① 服务商数据是否出境；② 是否用于模型训练；③ 是否签署数据安全协议。详见合规边界章节。</div></div></div>
+  </div>
+</section>
+
+<!-- PART 02 -->
+<div class="part-banner" data-part="02">
+  <div class="pb-label">PART 02</div>
+  <div class="pb-title">功能与项目场景</div>
+  <div class="pb-desc">ChatGPT 侧重协作、理解与文档产出；Codex 侧重执行、自动化与流程沉淀。本模块按实际使用场景拆解每个功能的适用边界、典型操作和注意事项。</div>
+  <div class="pb-tags">
+    <span class="pb-tag">Projects</span><span class="pb-tag">Deep Research</span>
+    <span class="pb-tag">Data Analysis</span><span class="pb-tag">Tasks</span>
+    <span class="pb-tag">Canvas / 写作</span><span class="pb-tag">Codex CLI</span>
+    <span class="pb-tag">AGENTS.md</span><span class="pb-tag">Skills</span>
+  </div>
+</div>
+
+<section id="chatgpt-projects" class="sec">
+  <span class="bc">PART 02 · ChatGPT — Projects</span>
+  <h2 class="sec-title">Projects：长期项目知识库</h2>
+  <p class="sec-lead">Projects 把文件、Custom Instructions 和对话历史集中在同一项目上下文里。AI 始终「记得」你的项目背景，不用每次重新解释是什么项目、什么客户、什么口径。</p>
+  <div class="where-box">
+    <div class="where-icon">📍</div>
+    <div class="where-body">
+      <div class="where-title">在哪里找</div>
+      <div class="where-desc">chat.openai.com 浏览器版 + Desktop App 均有。左侧边栏 → Projects（或「+ New project」）。</div>
+      <div class="where-path">chat.openai.com → 左侧边栏 → Projects</div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card tg">
+      <div class="card-title">✅ 适合的项目任务</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 政府咨询——周期长、资料多、多版本报告<br>
+        • 长期访谈研究——多轮记录归档交叉分析<br>
+        • 多人协作——统一口径、格式和客户要求<br>
+        • 周报 / 月报——基于同一背景持续更新
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📁 推荐文件组织</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 合同 / 项目方案（确定范围和口径）<br>
+        • 访谈提纲 + 记录（按日期命名）<br>
+        • 政策文件（政策名称 + 发布年份）<br>
+        • 报告模板（确定格式标准）<br>
+        • 客户反馈 / 历次沟通纪要
+      </div>
+    </div>
+  </div>
+  <div class="sop">
+    <div class="sop-head" onclick="toggleSop(this)"><span>📋 Custom Instructions 模板（点击展开）</span><span class="sop-arrow">▶</span></div>
+    <div class="sop-body">
+      <div class="code" style="font-size:12px">
+你是本项目的研究助手。项目背景：[四川省餐饮个体工商户动态监测研究]，委托方为[某省商务厅]。<br><br>
+输出风格：政府咨询报告风格，客观陈述，避免绝对化表述。<br>
+数据规范：政策数据必须标注来源和时间，不得编造统计数字。<br>
+格式：段落使用二级标题，要点用短句。<br><br>
+禁止事项：<br>
+- 不得将客户名称、项目编号写入任何输出<br>
+- 不得引用未经提供的"内部数据"或"调研结论"<br>
+- 所有政策摘引须注明"来源：[文件名]"
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-warn"><strong>文件安全：</strong>禁止上传含客户个人隐私、涉密数据、合同金额的原始文件。优先上传脱敏摘要版本。</div>
+</section>
+
+<section id="chatgpt-research" class="sec">
+  <span class="bc">PART 02 · ChatGPT — Deep Research</span>
+  <h2 class="sec-title">Deep Research：带来源的深度研究</h2>
+  <p class="sec-lead">Deep Research 可结合网页、上传文件，生成带来源引用的研究报告。适合行业研究、政策梳理、竞品分析、区域对标——它会自主规划研究路径，多步检索后汇总。</p>
+  <div class="grid-2">
+    <div class="card tg">
+      <div class="card-title">✅ 适用场景</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 政策梳理：检索某领域近三年政策演变<br>
+        • 行业数据：汇总行业规模、增速、区域分布<br>
+        • 竞品/对标：梳理其他地区典型案例和做法<br>
+        • 证据收集：整理可写入报告的可引用事实
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚠️ 使用要求</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 必须要求「列出来源 URL 和发布时间」<br>
+        • 区分「事实陈述」和「AI 判断/推断」<br>
+        • 关键数据落库前必须点进原始链接核实<br>
+        • 不得将未核实的 Deep Research 结论直接写进报告
+      </div>
+    </div>
+  </div>
+  <div class="sop">
+    <div class="sop-head" onclick="toggleSop(this)"><span>📝 Deep Research 提示词模板（点击展开）</span><span class="sop-arrow">▶</span></div>
+    <div class="sop-body">
+      <div class="code" style="font-size:12px">
+请围绕【四川省餐饮个体工商户参与新消费场景】，执行以下研究任务：<br><br>
+1. 检索近三年（2022-2024）相关政策文件，列出政策名称、发布机关、发布时间<br>
+2. 汇总行业规模数据（市场规模、商户数量、增速），标注数据来源和统计口径<br>
+3. 整理四川省内典型案例或示范场景（不少于3个），注明地区和来源<br>
+4. 输出格式：<br>
+&nbsp;&nbsp; - 研究摘要（200字以内）<br>
+&nbsp;&nbsp; - 证据表（来源 | 核心信息 | 时间 | URL）<br>
+&nbsp;&nbsp; - 可写入报告的核心观点（3-5条，区分"事实"和"判断"）<br><br>
+注意：所有信息必须标注来源，不确定的内容请注明"待核实"。
+      </div>
+    </div>
+  </div>
+  <div class="callout"><strong>使用逻辑：</strong>Deep Research 负责「广度检索 + 结构化汇总」，人工负责「核实关键数据 + 判断是否可用」。AI 给你省去搜索和整理时间，核实工作仍需人来做。</div>
+</section>
+
+<section id="chatgpt-data" class="sec">
+  <span class="bc">PART 02 · ChatGPT — 文件与数据分析</span>
+  <h2 class="sec-title">Files + Data Analysis：文件阅读与数据分析</h2>
+  <p class="sec-lead">Data Analysis 支持上传 Excel、PDF、Word、CSV、图片等格式，AI 可直接读取并执行分析——生成统计表、交叉分析、图表和分析结论，无需提前写脚本。</p>
+  <div class="sop" style="margin:14px 0">
+    <div class="sop-head" onclick="toggleSop(this)"><span>📊 Excel / 问卷数据清洗典型流程（点击展开）</span><span class="sop-arrow">▶</span></div>
+    <div class="sop-body">
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-body"><div class="step-title">上传文件 + 说明数据背景</div><div class="step-desc">「这是一份问卷星导出的 Excel，第一行是表头，A 列是受访者编号，B-F 列是李克特量表（1-5 分）。」</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-body"><div class="step-title">要求先做数据质检</div><div class="step-desc">「请先检查：① 有多少行有效数据；② 有没有完全空白行；③ 量表列有没有超出 1-5 范围的异常值。」</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-body"><div class="step-title">分组统计与交叉分析</div><div class="step-desc">「按受访者行业分组，计算每组的 B-F 列均值，输出为表格，并说明各组之间差异是否显著。」</div></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-body"><div class="step-title">生成图表</div><div class="step-desc">「基于上面的分组统计结果，生成一张分组对比柱状图，颜色方案用蓝绿系，标注每组样本量 n=xx。」</div></div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-body"><div class="step-title">输出分析结论</div><div class="step-desc">「综合以上数据，用 3-5 句话描述核心发现，区分'数据事实'和'可能的解释'，避免过度推论。」</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-warn"><strong>数据安全提醒：</strong>上传前请确认文件不含客户姓名、手机号、身份证号等个人敏感信息。问卷数据建议先在本地删除个人标识列再上传。</div>
+</section>
+
+<section id="chatgpt-tasks" class="sec">
+  <span class="bc">PART 02 · ChatGPT — Tasks</span>
+  <h2 class="sec-title">Tasks：定时提醒与动态监测</h2>
+  <p class="sec-lead">Tasks 支持三类任务：一次性提醒、周期性提醒、监测型任务（基于搜索结果触发）。适合项目节点提醒、政策动态跟踪、周报生成等周期性工作。</p>
+  <table class="tbl">
+    <thead><tr><th>任务类型</th><th>配置方式</th><th>项目典型用法</th></tr></thead>
+    <tbody>
+      <tr><td class="td-b">一次性提醒</td><td>指定日期和时间</td><td>「2024-11-30 提醒我提交项目中期报告」</td></tr>
+      <tr><td class="td-b">周期性提醒</td><td>每天 / 每周 / 每月</td><td>「每周五下午 3 点，提醒整理本周项目进展要点」</td></tr>
+      <tr><td class="td-b">监测型任务</td><td>基于搜索关键词</td><td>「每天检查"四川餐饮扶持政策"相关新闻，有新内容时通知我」</td></tr>
+    </tbody>
+  </table>
+  <div class="callout"><strong>使用建议：</strong>Tasks 适合「提醒触发」场景，不适合替代项目管理工具（飞书、Teambition）。把 Tasks 理解为「AI 助手会主动提醒你做的事」，而不是项目进度跟踪系统。</div>
+</section>
+
+<section id="chatgpt-writing" class="sec">
+  <span class="bc">PART 02 · ChatGPT — 写作与 Canvas</span>
+  <h2 class="sec-title">写作与 Canvas：报告初稿与多轮修改</h2>
+  <p class="sec-lead">Canvas 是专为长文档多轮修改设计的写作界面——你可以在同一画布中对特定段落进行局部修改，同时保持其他内容不变，避免每次修改都要重新生成全文。</p>
+  <div class="grid-2">
+    <div class="card tg">
+      <div class="card-title">适合用 Canvas 的场景</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 报告正文多轮修改（5000字以上）<br>
+        • 访谈摘要逐段打磨<br>
+        • PPT 讲稿与正文文档同步修改<br>
+        • 同一报告不同章节风格统一
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">写作质量控制要点</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 政策数据、金额、排名、时间口径——人工复核<br>
+        • AI 给的「研究发现」——必须有原始数据支撑<br>
+        • 报告结论——不得由 AI 单独生成，需基于真实访谈/数据<br>
+        • 客户专有术语——建议在 Custom Instructions 中列出
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-warn"><strong>核心原则：</strong>AI 不能替代专业判断。所有政策数据、金额、排名、时间口径必须人工复核。报告中的研究结论必须基于真实的访谈记录或数据，AI 只辅助表达，不生产结论。</div>
+</section>
+
+<section id="codex-exec" class="sec">
+  <span class="bc">PART 02 · Codex — CLI 与 IDE</span>
+  <h2 class="sec-title">Codex CLI / IDE：把意图变成可执行代码</h2>
+  <p class="sec-lead">Codex CLI 可以读取本地目录内的所有文件，理解项目结构，然后根据自然语言描述生成、修改并执行代码。IDE 扩展则在写代码时提供行内实时补全与解释。</p>
+  <div class="grid-2">
+    <div class="card tg">
+      <div class="card-title">Codex CLI 核心能力</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 读取本地目录内任意格式文件<br>
+        • 理解文件间关系（如多张 Excel 之间的关联）<br>
+        • 生成 Python / Bash / SQL 脚本<br>
+        • 自动执行代码并返回结果<br>
+        • 报错后自动修复（复制错误信息即可）
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">VS Code 扩展核心能力</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 行内代码补全（Tab 接受建议）<br>
+        • 选中代码后解释或重写（右键菜单）<br>
+        • 在侧边栏对话修改当前文件<br>
+        • 支持 Python、VBA、HTML、SQL
+      </div>
+    </div>
+  </div>
+  <div class="callout"><strong>验收原则：</strong>每次运行后先检查：① 行数是否对；② 数值范围是否合理；③ 图表轴标签是否正确。验收通过再进行下一步。出现异常立即停止，不要忽略报错继续运行。</div>
+</section>
+
+<section id="codex-agents" class="sec">
+  <span class="bc">PART 02 · Codex — AGENTS.md 与 Skills</span>
+  <h2 class="sec-title">AGENTS.md 与 Skills：团队规则与可复用能力</h2>
+  <p class="sec-lead">AGENTS.md 是项目目录中的规则文件，告诉 Codex 这个项目的数据口径、命名规范和禁止事项；Skills 则把验证过的操作流程封装成可重复调用的能力模块。</p>
+  <div class="sop" style="margin:14px 0">
+    <div class="sop-head" onclick="toggleSop(this)"><span>📋 AGENTS.md 模板（点击展开）</span><span class="sop-arrow">▶</span></div>
+    <div class="sop-body">
+      <div class="code" style="font-size:12px">
+# AGENTS.md — 四川餐饮个体工商户动态监测项目<br><br>
+## 项目背景<br>
+本项目研究四川省餐饮类个体工商户的经营状态与政策支持情况。<br>
+数据主要来源：问卷调查（n=312）、政策文件、统计年鉴。<br><br>
+## 数据口径<br>
+- 个体工商户：指在工商部门登记、非法人主体的经营户<br>
+- 餐饮类：仅包含 GB/T 4754-2017 中 C 大类餐饮服务<br>
+- 时间口径：2021-2023 年数据，2024 年为预估值需标注<br><br>
+## 禁止事项<br>
+- 禁止编造任何统计数据或政策内容<br>
+- 禁止将原始问卷中的个人信息写入输出文件<br>
+- 禁止在没有数据支撑的情况下生成"研究结论"<br>
+- 禁止删除原始数据文件（只读，不修改）
+      </div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card tg">
+      <div class="card-title">⚙️ Skills 适合封装的场景</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        • 问卷数据质检（缺失值 / 异常值检查）<br>
+        • 标准分组统计（按行业、地区、规模）<br>
+        • 热力图生成（可配置参数化颜色和维度）<br>
+        • Word 报告批量格式化<br>
+        • 多文件合并去重
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔌 国内模型 OpenAI-compatible 接入</div>
+      <div class="card-desc" style="margin-top:8px;line-height:1.9">
+        不需要重学 SDK，只需替换三个参数：<code>base_url</code>、<code>api_key</code>、<code>model</code>。<br><br>
+        验证顺序：质量对比 → 成本核算 → 数据安全确认 → 推团队使用。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="scenario-map" class="sec">
+  <span class="bc">PART 02 · 功能场景总表</span>
+  <h2 class="sec-title">功能场景总表</h2>
+  <p class="sec-lead">8 个功能的推荐场景、最佳组合与可交付产出一览——帮助团队在面对具体任务时快速选择合适工具。</p>
+  <table class="tbl">
+    <thead><tr><th>功能</th><th>最适合的项目任务</th><th>最佳组合</th><th>可交付产出</th></tr></thead>
+    <tbody>
+      <tr><td class="td-b">Projects</td><td>长期项目知识库、口径沉淀、多轮报告管理</td><td>上传文件 + Custom Instructions</td><td>项目知识库、周报、汇报材料</td></tr>
+      <tr><td class="td-b">Deep Research</td><td>行业研究、政策梳理、竞品对标</td><td>Projects + 网页检索</td><td>带来源的研究摘要 + 证据表</td></tr>
+      <tr><td class="td-b">Data Analysis</td><td>问卷清洗、统计分析、PDF 抽取</td><td>上传文件 + 图表生成</td><td>清洗后 Excel + 统计图表</td></tr>
+      <tr><td class="td-b">Tasks</td><td>节点提醒、政策监测、周报生成触发</td><td>周期任务 + 搜索监测</td><td>定时推送的摘要与提醒</td></tr>
+      <tr><td class="td-b">Canvas / 写作</td><td>报告初稿、访谈摘要、PPT 讲稿</td><td>Projects + 分段生成</td><td>可直接修改的 Word 草稿</td></tr>
+      <tr><td class="td-b">Codex CLI</td><td>数据脚本、批量处理、图表自动化</td><td>AGENTS.md + Python 环境</td><td>.py 脚本 + Excel/PNG 输出</td></tr>
+      <tr><td class="td-b">AGENTS.md + Skills</td><td>流程标准化、团队能力共享</td><td>Codex CLI + 录制复用</td><td>可复用 Skill 库</td></tr>
+      <tr><td class="td-b">国内兼容 API</td><td>访问受限或成本敏感的替代方案</td><td>替换三个参数 + 质量验证</td><td>兼容同一套代码的低成本方案</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="prompting" class="sec">
+  <span class="bc">PART 02 · 提示词框架</span>
+  <h2 class="sec-title">六要素提示词框架：一次说清，减少来回</h2>
+  <p class="sec-lead">好的提示词不靠灵感，靠结构。六要素框架适用于所有场景——报告写作、数据分析、政策检索，进入 Part 03 实操前先掌握这个基础工具。</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">六要素结构</div>
+      <div class="steps" style="margin-top:11px">
+        <div class="step"><div class="step-n" style="font-size:11px">角色</div><div class="step-body"><div class="step-desc">「你是一位政府咨询顾问，擅长数据分析和政策研究」</div></div></div>
+        <div class="step"><div class="step-n" style="font-size:11px">任务</div><div class="step-body"><div class="step-desc">具体要做什么：「整理以下访谈记录中的核心观点」</div></div></div>
+        <div class="step"><div class="step-n" style="font-size:11px">背景</div><div class="step-body"><div class="step-desc">项目上下文、数据说明、受众是谁</div></div></div>
+        <div class="step"><div class="step-n" style="font-size:11px">步骤</div><div class="step-body"><div class="step-desc">如有顺序要求，逐步说明：「先检查，再统计，再生成图表」</div></div></div>
+        <div class="step"><div class="step-n" style="font-size:11px">格式</div><div class="step-body"><div class="step-desc">期望输出格式：「Markdown 表格」「Word 段落」「Python 脚本」</div></div></div>
+        <div class="step"><div class="step-n" style="font-size:11px">示例</div><div class="step-body"><div class="step-desc">给出参考示例——有例子比无例子效果好 50%+</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card tg" style="margin-bottom:14px">
+        <div class="card-title">数据分析提示词示例</div>
+        <div class="code" style="margin-top:8px;font-size:11.5px">
+【角色】你是数据分析专家<br>
+【任务】清洗并分析上传的问卷数据<br>
+【背景】312份餐饮个体工商户问卷，<br>按行业子类分组（A列），<br>B-F列为5分制量表<br>
+【步骤】<br>
+1. 先做数据质检（空值/异常值/重复）<br>
+2. 按A列分组计算B-F均值<br>
+3. 生成分组对比图表<br>
+4. 输出3-5句分析结论<br>
+【格式】Excel表格 + PNG图表 + 文字说明<br>
+【示例】[附上上次分析的截图或格式]
+        </div>
+      </div>
+      <div class="callout" style="font-size:12.5px">六要素不必每次都写全，但<strong>任务 + 背景 + 格式</strong>三要素是最低要求。缺少背景是提示词失效最常见的原因。</div>
+    </div>
+  </div>
+</section>
+
+<!-- PART 03 -->
+<div class="part-banner" data-part="03">
+  <div class="pb-label">PART 03</div>
+  <div class="pb-title">最佳案例：Python 生成热力图</div>
+  <div class="pb-desc">以一条最贴近项目组日常的完整链路演示：从搭建 Python 环境、用 AI 生成数据清洗脚本，到输出一张可交付的热力图——还原从 0 到 1 的完整操作过程。</div>
+  <div class="pb-tags">
+    <span class="pb-tag">Python 环境配置</span>
+    <span class="pb-tag">Codex 生成脚本</span>
+    <span class="pb-tag">运行 → 验收 → 迭代</span>
+  </div>
+</div>
+
+<section id="case-flow" class="sec">
+  <span class="bc">PART 03 · 案例 — 操作流程</span>
+  <h2 class="sec-title">四步操作流程：从环境到交付</h2>
+  <p class="sec-lead">不懂 Python 的同事也可以完成。每步有具体命令和验收标准。</p>
+  <div class="grid-2">
+    <div class="card tg"><div class="card-num">1</div><div class="card-title">准备环境</div><div class="card-desc"><code>pip install pandas matplotlib openpyxl seaborn</code><br>验证：<code>python --version</code> 应返回 3.8+</div></div>
+    <div class="card"><div class="card-num">2</div><div class="card-title">用 Codex 生成脚本</div><div class="card-desc">进入项目目录运行 <code>codex</code>，用自然语言描述需求，Codex 自动读取数据文件并生成 <code>heatmap.py</code>。</div></div>
+    <div class="card"><div class="card-num">3</div><div class="card-title">运行脚本</div><div class="card-desc">执行 <code>python heatmap.py</code>。若报错，复制错误信息回 Codex，通常 1-2 轮修复；也可使用 ChatGPT Data Analysis 直接上传文件生成图表。</div></div>
+    <div class="card"><div class="card-num">4</div><div class="card-title">验收与迭代</div><div class="card-desc">检查输出 PNG：轴标签 / 数值 / 颜色。用自然语言反馈：「X 轴改为季度」——Codex 直接修改代码。</div></div>
+  </div>
+  <div class="callout"><strong>环境备忘：</strong><code>pip install pandas matplotlib openpyxl seaborn</code> → <code>codex</code> → 描述需求 → <code>python heatmap.py</code></div>
+</section>
+
+<section id="case-prompt" class="sec">
+  <span class="bc">PART 03 · 案例 — 示例提示词</span>
+  <h2 class="sec-title">示例提示词：生成热力图脚本</h2>
+  <div class="grid-2">
+    <div class="card tg">
+      <div class="card-title">六要素提示词（可直接使用）</div>
+      <div class="code" style="margin-top:10px;font-size:11.5px">
+【角色】Python 数据分析专家<br>
+【任务】生成地区×月份热力图脚本<br>
+【背景】<br>
+模拟数据：行=地区（华北/华南/华东/西南）<br>
+列=月份（1-12月），值=0-100随机整数<br>
+【步骤】<br>
+1. 用 pandas 生成 DataFrame<br>
+2. seaborn.heatmap，色板 YlOrRd<br>
+3. 标题/轴标签/数值标注<br>
+4. --output 参数指定输出路径<br>
+【格式】单个 .py，含注释，PNG 300dpi<br>
+【示例】输出：heatmap_output.png
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">ChatGPT Data Analysis 版本</div>
+      <div class="code" style="margin-top:10px;font-size:11.5px">
+上传 Excel 文件后说：<br><br>
+「请基于以上数据生成一张热力图：<br>
+- 行：地区（华北/华南/华东/西南）<br>
+- 列：月份（1-12月）<br>
+- 颜色：YlOrRd 渐变，数值越高颜色越深<br>
+- 添加数值标注、标题和轴标签<br>
+- 导出为高清 PNG（300dpi）」
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section id="compliance" class="sec">
+  <span class="bc">合规与边界</span>
+  <h2 class="sec-title">合规使用规范：四条边界线</h2>
+  <p class="sec-lead">四条规则适用于所有成员使用 ChatGPT 和 Codex 的全部场景。不确定时先问项目负责人。</p>
+  <div class="comp-grid">
+    <div class="comp-card comp-red">
+      <div class="comp-title">🚫 客户资料与涉密数据</div>
+      <ul class="comp-list">
+        <li>禁止将客户全名、手机、身份证、合同金额上传任何 AI 平台</li>
+        <li>问卷数据上传前必须删除个人标识列</li>
+        <li>标注「内部资料」或「保密」的文件禁止上传</li>
+        <li>政府项目未公开数据禁止上传</li>
+      </ul>
+    </div>
+    <div class="comp-card comp-yellow">
+      <div class="comp-title">⚠️ 上传文件安全规则</div>
+      <ul class="comp-list">
+        <li>上传前问：「如果这个文件被公开，有什么后果？」</li>
+        <li>优先上传摘要版本，而非完整原始文件</li>
+        <li>API Key、数据库配置文件禁止上传</li>
+        <li>国内模型使用前确认服务商数据安全协议</li>
+      </ul>
+    </div>
+    <div class="comp-card comp-red">
+      <div class="comp-title">🚫 AI 幻觉核验要求</div>
+      <ul class="comp-list">
+        <li>AI 生成的所有政策数据须点进原始链接核实</li>
+        <li>统计数字（规模/增速/排名）须标注来源后人工确认</li>
+        <li>AI 生成的「引用」逐一核实是否存在原始出处</li>
+        <li>Deep Research 结论不得直接用于正式报告</li>
+      </ul>
+    </div>
+    <div class="comp-card comp-green">
+      <div class="comp-title">✅ 交付物复核规则</div>
+      <ul class="comp-list">
+        <li>含数据的交付物须有人工复核记录</li>
+        <li>AI 生成报告初稿须经项目负责人审阅后方可发客户</li>
+        <li>Codex 生成的 Excel/图表须与原始数据抽样比对</li>
+        <li>政策建议须咨询专业判断后写入</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout callout-red" style="margin-top:18px">
+    <strong>总原则：</strong>AI 是助手，不是背书人。所有对外交付物的准确性、合规性和专业性，最终责任在项目团队。
+  </div>
+</section>
+
+<!-- WRAPUP -->
+<section id="wrapup" class="sec">
+  <span class="bc">总结</span>
+  <h2 class="sec-title">最后带走 4 个判断</h2>
+  <p class="sec-lead">不必把每个功能都用上。这 4 个判断帮你在面对新任务时快速决定用哪个工具。</p>
+  <div class="steps">
+    <div class="step"><div class="step-n">01</div><div class="step-body"><div class="step-title">ChatGPT 先做协作与拆解，Codex 再做执行与自动化</div><div class="step-desc">遇到模糊的大任务，先用 ChatGPT 把问题拆清楚、材料整理好，再交给 Codex 生成脚本执行。两者是上下游关系，不是竞争关系。</div></div></div>
+    <div class="step"><div class="step-n">02</div><div class="step-body"><div class="step-title">国内模型先按 OpenAI-compatible 方案验证，通过后再推广</div><div class="step-desc">不需要重学 SDK，只需替换三个参数。验证顺序：质量对比 → 成本核算 → 数据安全确认 → 推团队使用。</div></div></div>
+    <div class="step"><div class="step-n">03</div><div class="step-body"><div class="step-title">高质量提示词 = 角色 + 任务 + 背景 + 步骤 + 格式 + 示例</div><div class="step-desc">六要素框架通用于报告写作、数据分析、政策检索、PPT 生成。最低要求：任务 + 背景 + 格式，缺背景是提示词失效最常见的原因。</div></div></div>
+    <div class="step"><div class="step-n">04</div><div class="step-body"><div class="step-title">所有对外交付物必须人工复核，AI 不背书，责任在团队</div><div class="step-desc">AI 负责提速、AI 负责初稿、AI 负责格式化——但数据准确性、结论合理性、合规边界，永远是项目团队的责任。</div></div></div>
+  </div>
+  <div class="callout callout-teal" style="margin-top:22px">
+    <strong>延伸资源：</strong>OpenAI 官方文档 platform.openai.com/docs &nbsp;·&nbsp; Codex 文档 openai.com/codex &nbsp;·&nbsp; 模型定价 openai.com/pricing
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+function setA(el){document.querySelectorAll('.sb-link').forEach(a=>a.classList.remove('active'));el.classList.add('active');}
+const sections=document.querySelectorAll('.sec[id]');
+const links=document.querySelectorAll('.sb-link');
+sections.forEach(sec=>{
+  new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>{l.classList.remove('active');if(l.getAttribute('href')==='#'+id)l.classList.add('active');});}});},{rootMargin:'-15% 0px -72% 0px'}).observe(sec);
+});
+function toggleSop(head){head.classList.toggle('open');head.nextElementSibling.classList.toggle('open');}
+</script>
+</body>
+</html>
